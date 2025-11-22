@@ -1,15 +1,20 @@
 var express = require('express');
 var router = express.Router();
-var fetch = require('node-fetch');
+const request = require('request');
 
-router.get('/', async function(req, res, next){
-    try {
-        const response = await fetch('https://dog.ceo/api/breeds/image/random');
-        const data = await response.json();
-        res.render('dog', { title: 'Dog API', imageUrl: data.message });
-    } catch (err) {
-        next(err);
-    }
+router.get('/', (req, res) => {
+    request('https://dog.ceo/api/breeds/image/random', function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            const data = JSON.parse(body);
+            const output = [{
+                id: "dog1",
+                url: data.message,
+                width: 400,
+                height: 300
+            }];
+            res.json(output);
+        }
+    });
 });
 
 module.exports = router;
